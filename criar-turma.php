@@ -12,18 +12,24 @@ $studentRepository = new PdoStudentRepository($connection);
 //realizo processos de definição da turma
 
 $connection->beginTransaction();
-$aStudent = new Student(null,
-    'Nico Steppat',
-    new DateTimeImmutable('1985-09-25')
-);
+try {
 
-$studentRepository->save($aStudent);
 
-$anotherStudent = new Student(null,
-    'Sergio Lopes',
-    new DateTimeImmutable('1985-09-25')
-);
+    $aStudent = new Student(null,
+        'Nico Steppat',
+        new DateTimeImmutable('1985-09-25')
+    );
 
-$studentRepository->save($anotherStudent);
+    $studentRepository->save($aStudent);
 
-$connection->rollBack();
+    $anotherStudent = new Student(null,
+        'Sergio Lopes',
+        new DateTimeImmutable('1985-09-25')
+    );
+
+    $studentRepository->save($anotherStudent);
+    $connection->commit();
+}catch (\PDOException $e){
+    echo $e->getMessage();
+    $connection->rollBack();
+}
